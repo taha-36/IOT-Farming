@@ -1,0 +1,18 @@
+[2025-11-04T13:52:18.999+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-11-04T13:52:19.094+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline.generate_data manual__2025-11-04T13:52:15.255110+00:00 [queued]>
+[2025-11-04T13:52:19.141+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline.generate_data manual__2025-11-04T13:52:15.255110+00:00 [queued]>
+[2025-11-04T13:52:19.143+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-11-04T13:52:19.175+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): generate_data> on 2025-11-04 13:52:15.255110+00:00
+[2025-11-04T13:52:19.212+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline', 'generate_data', 'manual__2025-11-04T13:52:15.255110+00:00', '--job-id', '89', '--raw', '--subdir', 'DAGS_FOLDER/Pipeline.py', '--cfg-path', '/tmp/tmpdwo90gw0']
+[2025-11-04T13:52:19.220+0000] {standard_task_runner.py:91} INFO - Job 89: Subtask generate_data
+[2025-11-04T13:52:19.238+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=1203) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-11-04T13:52:19.240+0000] {standard_task_runner.py:63} INFO - Started process 1204 to run task
+[2025-11-04T13:52:19.364+0000] {task_command.py:426} INFO - Running <TaskInstance: etl_pipeline.generate_data manual__2025-11-04T13:52:15.255110+00:00 [running]> on host 948220e29537
+[2025-11-04T13:52:19.550+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline' AIRFLOW_CTX_TASK_ID='generate_data' AIRFLOW_CTX_EXECUTION_DATE='2025-11-04T13:52:15.255110+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-11-04T13:52:15.255110+00:00'
+[2025-11-04T13:52:19.551+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-11-04T13:52:24.574+0000] {python.py:237} INFO - Done. Returned value was: None
+[2025-11-04T13:52:24.576+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-11-04T13:52:24.601+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=etl_pipeline, task_id=generate_data, run_id=manual__2025-11-04T13:52:15.255110+00:00, execution_date=20251104T135215, start_date=20251104T135219, end_date=20251104T135224
+[2025-11-04T13:52:24.672+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-11-04T13:52:24.735+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-11-04T13:52:24.740+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

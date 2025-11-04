@@ -1,0 +1,41 @@
+[2025-11-04T11:57:03.375+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-11-04T11:57:03.470+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline.transform_data manual__2025-11-04T11:55:59.181859+00:00 [queued]>
+[2025-11-04T11:57:03.491+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline.transform_data manual__2025-11-04T11:55:59.181859+00:00 [queued]>
+[2025-11-04T11:57:03.493+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-11-04T11:57:03.520+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): transform_data> on 2025-11-04 11:55:59.181859+00:00
+[2025-11-04T11:57:03.537+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline', 'transform_data', 'manual__2025-11-04T11:55:59.181859+00:00', '--job-id', '21', '--raw', '--subdir', 'DAGS_FOLDER/Pipeline.py', '--cfg-path', '/tmp/tmp0v9l76ko']
+[2025-11-04T11:57:03.553+0000] {standard_task_runner.py:91} INFO - Job 21: Subtask transform_data
+[2025-11-04T11:57:03.553+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=519) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-11-04T11:57:03.555+0000] {standard_task_runner.py:63} INFO - Started process 520 to run task
+[2025-11-04T11:57:03.756+0000] {task_command.py:426} INFO - Running <TaskInstance: etl_pipeline.transform_data manual__2025-11-04T11:55:59.181859+00:00 [running]> on host a657518b2a5e
+[2025-11-04T11:57:03.942+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline' AIRFLOW_CTX_TASK_ID='transform_data' AIRFLOW_CTX_EXECUTION_DATE='2025-11-04T11:55:59.181859+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-11-04T11:55:59.181859+00:00'
+[2025-11-04T11:57:03.944+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-11-04T11:57:04.182+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-11-04T11:57:04.185+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 401, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/python.py", line 235, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/python.py", line 252, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/Pipeline.py", line 54, in run_transform
+    result = subprocess.run(
+             ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python', '/opt/airflow/dags/TransformData.py']' returned non-zero exit status 2.
+[2025-11-04T11:57:04.225+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=etl_pipeline, task_id=transform_data, run_id=manual__2025-11-04T11:55:59.181859+00:00, execution_date=20251104T115559, start_date=20251104T115703, end_date=20251104T115704
+[2025-11-04T11:57:04.267+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 21 for task transform_data (Command '['python', '/opt/airflow/dags/TransformData.py']' returned non-zero exit status 2.; 520)
+[2025-11-04T11:57:04.293+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2025-11-04T11:57:04.335+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-11-04T11:57:04.342+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

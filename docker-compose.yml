@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   # ------------------ #
@@ -22,34 +22,32 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
+      - "9093:9093"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker:9092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - shared-network
 
-  # ✅ Kafka topic initializer (runs once after Kafka starts)
   kafka-init:
     image: confluentinc/cp-kafka:7.4.0
     depends_on:
       - kafka
     entrypoint: ["/bin/bash", "-c"]
     command: >
-      "
       echo 'Waiting for Kafka to be ready...' &&
       sleep 10 &&
-      kafka-topics --create --topic North-India --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092 &&
-      kafka-topics --create --topic South-India --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092 &&
-      kafka-topics --create --topic South-USA --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092 &&
-      kafka-topics --create --topic Central-USA --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092 &&
-      kafka-topics --create --topic East-Africa --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092 &&
+      kafka-topics --create --topic North-India --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka-broker:9092 &&
+      kafka-topics --create --topic South-India --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka-broker:9092 &&
+      kafka-topics --create --topic South-USA --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka-broker:9092 &&
+      kafka-topics --create --topic Central-USA --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka-broker:9092 &&
+      kafka-topics --create --topic East-Africa --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka-broker:9092 &&
       echo '✅ Kafka topics created successfully!'
-      "
     networks:
       - shared-network
 
@@ -79,13 +77,17 @@ services:
     depends_on:
       - postgres
     entrypoint: /bin/bash
-    command: -c "airflow db init && airflow users create --username airflow --password airflow --firstname Admin --lastname User --role Admin --email admin@example.com"
+    command: >
+      -c "pip install --no-cache-dir kafka-python confluent-kafka azure-storage-blob &&
+      airflow db init &&
+      airflow users create --username airflow --password airflow --firstname Admin --lastname User --role Admin --email admin@example.com"
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     user: "50000:0"
     volumes:
       - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
     networks:
@@ -97,22 +99,23 @@ services:
     container_name: airflow-webserver
     depends_on:
       - airflow-init
-    command: webserver
+      - kafka
+    entrypoint: /bin/bash
+    command: >
+      -c "pip install --no-cache-dir kafka-python confluent-kafka azure-storage-blob &&
+      airflow webserver"
     ports:
       - "8080:8080"
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      KAFKA_BROKER: kafka-broker:9092
     user: "50000:0"
     volumes:
       - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
-    healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
     networks:
       - shared-network
     restart: always
@@ -122,22 +125,25 @@ services:
     container_name: airflow-scheduler
     depends_on:
       - airflow-init
-    command: scheduler
+      - kafka
+    entrypoint: /bin/bash
+    command: >
+      -c "pip install --no-cache-dir kafka-python confluent-kafka azure-storage-blob &&
+      airflow scheduler"
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      KAFKA_BROKER: kafka-broker:9092
     user: "50000:0"
     volumes:
       - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
     networks:
       - shared-network
     restart: always
 
-# ------------------ #
-# SHARED NETWORK     #
-# ------------------ #
 networks:
   shared-network:
     driver: bridge
