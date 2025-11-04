@@ -26,15 +26,6 @@ The project uses a CSV dataset (`source.csv`) representing farm sensor data. Eac
 - **NDVI_index** – Vegetation index  
 - **crop_disease_status** – Crop disease level (None, Mild, Moderate, Severe)  
 
-Example row:
-
-FARM0001,North India,Wheat,35.95,5.99,17.79,75.62,77.03,7.27,None,Organic,6.34,1/8/2024,5/9/2024,122,4408.07,SENS0001,3/19/2024,14.970941,82.997689,0.63,Mild
-
-yaml
-Copy code
-
----
-
 ## Features
 
 1. **Data Generation** – Simulated IoT sensor data is sampled from the source CSV and sent to Kafka topics based on the region.  
@@ -70,9 +61,6 @@ project-root/
 ├─ docker-compose.yml # Docker Compose setup
 └─ README.md
 
-yaml
-Copy code
-
 > **Note:** `temp` and `temptrans` are created dynamically by Airflow tasks. `source.csv` is stored in the `data` folder, which is mounted in Airflow containers.
 
 ---
@@ -87,28 +75,18 @@ No other installations are required. All Python dependencies (`kafka-python`, `c
 ---
 
 ## Setup Instructions
-
-1. Clone the repository:
-
-```bash
-git clone <your-repo-url>
-cd project-root
-Make sure source.csv is in the data folder.
-
 Start the environment:
 
-bash
-Copy code
-docker-compose up --build -d
+use the cmd "docker-compose up --build -d" in the project folder
 This will start:
 
-Zookeeper & Kafka broker
+   Zookeeper & Kafka broker
 
-Kafka initialization (topics for each region)
+   Kafka initialization (topics for each region)
 
-PostgreSQL database for Airflow metadata
+   PostgreSQL database for Airflow metadata
 
-Airflow webserver & scheduler (with dependencies installed)
+   Airflow webserver & scheduler (with dependencies installed)
 
 Access Airflow Web UI:
 
